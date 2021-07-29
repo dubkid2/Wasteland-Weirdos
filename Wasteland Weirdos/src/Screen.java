@@ -22,6 +22,7 @@ public class Screen extends JFrame implements ActionListener {
 	private JTextField field;
 	private JPanel window;
 	private JPanel BR;
+	private JPanel Layers;
 
 	
 	public Screen() {
@@ -49,9 +50,10 @@ public class Screen extends JFrame implements ActionListener {
 	
 	public void SetWindowed(DisplayMode dm, JFrame windows) {
 		Window=windows;
-		
 		window= new JPanel();
 		window.setLayout(null);
+		Layers=new JPanel();
+		Layers.setLayout(null);
 		BR = new JPanel();
 		BR.setLayout(null);
 		BR.setSize(800, 800);
@@ -60,16 +62,20 @@ public class Screen extends JFrame implements ActionListener {
 		vc.setDisplayMode(windowed);
 		window.setSize(800,800);
 		windows.setSize(800, 800);
-		Color BRC = new Color(170, 229, 47);
-		 window.setBackground(BRC);
+		Color BRC = new Color(1f, 1f, 1f, 0f);
+		window.setBackground(BRC);
 		//window.setUndecorated(false);
 		windows.setResizable(false);		
 		window.setVisible(true);	 
 		windows.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        windows.add(window);
-        windows.add(BR);
-         
+        Layers.add(window);
+        Layers.add(BR);
+        Layers.setComponentZOrder(window, 0);
+        Layers.setComponentZOrder(BR, 1);
+        Layers.setSize(800,800);
+        windows.add(Layers);
 
+        
 		int HsSize=400;
 		
 		windows.setTitle("Wasteland Weirdos");
@@ -87,6 +93,12 @@ public class Screen extends JFrame implements ActionListener {
 	        imageLabel.setBounds(200, 200, HsSize, HsSize);
 	        imageLabel.setVisible(true);
 	        window.add(imageLabel);
+	        
+	        ImageIcon image2 = new ImageIcon("src/background.jpg");
+	        JLabel imageLabel2 = new JLabel(image2); 
+	        imageLabel2.setBounds(0, 0, 800, 800);
+	        imageLabel2.setVisible(true);
+	        BR.add(imageLabel2);
 
 //	        ImageIcon BR = new ImageIcon("src/BR.jpg");
 //	        JLabel BRLabel = new JLabel(BR); 
@@ -115,8 +127,14 @@ public class Screen extends JFrame implements ActionListener {
 	        field.setFont(new Font("Comic Sans MS", Font.PLAIN, 20));
 	        field.setVisible(true);
 	        BR.add(field);
-	        BR.repaint();
+	        
+
+			
+			
 	        window.repaint();
+	        
+	        field.setText(" ");
+
 
 	        SimpleAudioPlayer audioPlayer;
 			try {
@@ -143,19 +161,96 @@ public class Screen extends JFrame implements ActionListener {
 	
 	
 
+	
+	
+	private void GoToScreen(int sc) {
+		window.removeAll();
+		BR.repaint();
+		
+		switch(sc) {
+		
+		case 2:
+			CharCreator();
+			break;
+		
+		default: System.out.println("You shouldn't be here...");
+		}
+		
+		
+		
+	}
+	
+	private void CharCreator () {
+		
+        JPanel Races = new JPanel(new GridLayout(1,0));
+		Races.setBounds(50, 50, 200, 600);
+		
+		field.setText(" ");
+		 
+		window.add(Races, BorderLayout.WEST);
+
+		Races.setVisible(true);
+		JButton Dwarves= new JButton("Dwarf");
+		Dwarves.setVisible(true);
+		Dwarves.setBounds(0,0,200,50);
+		Races.add(Dwarves);
+		
+		JButton Elves= new JButton("Elf");
+		Elves.setVisible(true);
+		Elves.setBounds(0,50,200,50);
+		Races.add(Elves);
+		
+		JButton Gnomes= new JButton("Gnome");
+		Gnomes.setVisible(true);
+		Gnomes.setBounds(0,100,200,50);
+		Races.add(Gnomes);
+		
+		JButton Orcs= new JButton("Orc");
+		Orcs.setVisible(true);
+		Orcs.setBounds(0,150,200,50);
+		Races.add(Orcs);
+		
+		JButton Humans= new JButton("Human");
+		Humans.setVisible(true);
+		Humans.setBounds(0,200,200,50);
+		Races.add(Humans);
+		
+		JButton Shialonians= new JButton("Shialonian");
+		Shialonians.setVisible(true);
+		Shialonians.setBounds(0,250,200,50);
+		Races.add(Shialonians);
+		
+		
+
+		JLabel label1= new JLabel("Choose Your Race");
+		 label1.setBounds(350,50, 400,50);
+		 label1.setVisible(true);
+		 label1.setFont(new Font("Comic Sans MS", Font.PLAIN, 35));
+		 window.add(label1);
+		
+	
+		Layers.repaint();
+
+		
+		
+	}
+	
+	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		String action=arg0.getActionCommand();
 		//System.out.println("something happened: " + action);
-		if(action.equals("New Game") ) {		System.out.println("The NewGame button has been pressed");}
+		if(action.equals("New Game") ) {		System.out.println("The NewGame button has been pressed");
+			GoToScreen(2);
+		}
 		
-		if(action.equals("settings") ) {		System.out.println("The other button has been pressed");}
+		if(action.equals("settings") ) {		System.out.println("The Settings button has been pressed");}
 		
 		
 		if(action.equals("Text")     ) {		try {
 			String text = field.getDocument().getText(0, field.getDocument().getLength());
 			switch(text) {
-			case "bruh": 	        window.removeAll(); window.repaint();
+			case "bruh": 	         window.repaint();
 				break;
 				
 			case "yeet": Window.dispatchEvent(new WindowEvent(Window, WindowEvent.WINDOW_CLOSING));
@@ -168,13 +263,6 @@ public class Screen extends JFrame implements ActionListener {
 			e.printStackTrace();
 		}}
 
-	}
-	
-	private void GoToScreen(int sc) {
-		window.removeAll();
-		
-		
-		
 	}
 	
 	
