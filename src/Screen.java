@@ -23,6 +23,7 @@ public class Screen extends JFrame implements ActionListener {
 	private JPanel window;
 	private JPanel BR;
 	private JPanel Layers;
+	private Character player=null;
 
 	
 	public Screen() {
@@ -103,6 +104,7 @@ public class Screen extends JFrame implements ActionListener {
 	        field.setVisible(true);
 	        BR.add(field);
 			BR.setComponentZOrder(field, 0);
+			//ImageIcon ButtonBR = new ImageIcon("src/button.jpg");
 
 	        
 	        ImageIcon image2 = new ImageIcon("src/background.jpg");
@@ -113,13 +115,10 @@ public class Screen extends JFrame implements ActionListener {
 			BR.setComponentZOrder(imageLabel2, 1);
 
 
-//	        ImageIcon BR = new ImageIcon("src/BR.jpg");
-//	        JLabel BRLabel = new JLabel(BR); 
-//	        window.add(BRLabel);
-//	       BRLabel.setBounds(0, 0, width, height);
-//	       BRLabel.setVisible(true);
+			
 	        
 	        JButton Start = new JButton ("New Game");
+	        //Start.setIcon(ButtonBR);
 	        Start.setVisible(true);
 	        Start.setBounds(200,650, 200, 50);
 	        Start.addActionListener(this);
@@ -179,6 +178,10 @@ public class Screen extends JFrame implements ActionListener {
 			CharCreator();
 			break;
 		
+		case 3:
+			Intro();
+			break;
+		
 		default: System.out.println("You shouldn't be here...");
 		}
 		
@@ -186,17 +189,22 @@ public class Screen extends JFrame implements ActionListener {
 		
 	}
 	
-	private JPanel SubRace;
+	private JPanel SubRace=null;
 	private JLabel RACE_S;
 	private JTextArea description;
 	private JButton select;
+	private JLabel which=null;
 	
 	private void CharCreator () {
 		
+		window.removeAll();
+		Layers.repaint();
+
+		
         JPanel Races = new JPanel(new GridLayout(0,1));
 		Races.setBounds(50, 50, 200, 300);
-		
-		description=new JTextArea();
+		if(SubRace!=null) {SubRace.setBounds(0,0,0,0);}
+		if(player==null) {description=new JTextArea();}
 		description.setBounds(50,450,675,250);
 		description.setFont(new Font("Comic Sans MS", Font.PLAIN, 18));
 		Color BRC = new Color(1f, 1f, 1f, 0f);
@@ -219,24 +227,33 @@ public class Screen extends JFrame implements ActionListener {
 		window.add(Races);
 		Races.setVisible(true);
 
+		select= new JButton( "Select");
+		select.setBounds( 50,375,200,50);
+		select.addActionListener(this);
+		if(player==null) {select.setActionCommand("CC_Select");}
+		else {select.setActionCommand("CC_Select2");}
+		select.setEnabled(false);
+		window.add(select);
 		
+	
 		JButton Elves= new JButton("Elf");
 		Elves.setVisible(true);
 		Elves.setBounds(0,0,200,50);
 		Elves.addActionListener(this);
 		Elves.setActionCommand("CC_Elves");
-		Races.add(Elves);
-		
-		select= new JButton( "Select");
-		select.setBounds( 50,375,200,50);
-		select.setEnabled(false);
-		window.add(select);
+		if(player==null) {Elves.setToolTipText("Dexterity +2, Strength -1, Constitution -1");}
+		else {Elves.setToolTipText("Intellect +2, Charisma +1, Willpower -1");}
+		//Elves.setComponentPopupMenu(Elves_P);
+		Races.add(Elves);		
+
 		
 		JButton Shialonians= new JButton("Shialonian");
 		Shialonians.setVisible(true);
 		Shialonians.setBounds(0,50,200,50);
 		Shialonians.addActionListener(this);
 		Shialonians.setActionCommand("CC_Shialonians");
+		Shialonians.setEnabled(false);
+		Shialonians.setBackground(Color.gray);
 		Races.add(Shialonians);
 		
 		JButton Orcs= new JButton("Orc");
@@ -244,6 +261,8 @@ public class Screen extends JFrame implements ActionListener {
 		Orcs.setBounds(0,100,200,50);
 		Orcs.addActionListener(this);
 		Orcs.setActionCommand("CC_Orcs");
+		if(player==null) {Orcs.setToolTipText("strength +2, Dexterity -1, Constitution -1");}
+		else {Orcs.setToolTipText("Willpower +2, Intellect -2");}
 		Races.add(Orcs);
 		
 		JButton Dwarves= new JButton("Dwarf");
@@ -251,6 +270,8 @@ public class Screen extends JFrame implements ActionListener {
 		Dwarves.setBounds(0,150,200,50);
 		Dwarves.addActionListener(this);
 		Dwarves.setActionCommand("CC_Dwarves");
+		if(player==null) {Dwarves.setToolTipText("Strength +2, Desterity -3, Constitution +2");}
+		else {Dwarves.setToolTipText("Willpower +3, Charisma -2");}
 		Races.add(Dwarves);
 		
 		JButton Gnomes= new JButton("Gnome");
@@ -258,6 +279,8 @@ public class Screen extends JFrame implements ActionListener {
 		Gnomes.setBounds(0,200,200,50);
 		Gnomes.addActionListener(this);
 		Gnomes.setActionCommand("CC_Gnomes");
+		if(player==null) {Gnomes.setToolTipText("Strength -3, Constitution -2, Dexterity +4");}
+		else {Gnomes.setToolTipText("Intellect +2, Willpower -2, Charisma +1");}
 		Races.add(Gnomes);
 		
 		
@@ -266,36 +289,126 @@ public class Screen extends JFrame implements ActionListener {
 		Humans.setBounds(0,250,200,50);
 		Humans.addActionListener(this);
 		Humans.setActionCommand("CC_Humans");
+		Humans.setToolTipText("Humans do not affect stats");
 		Races.add(Humans);	
 		
 
-		JLabel label1= new JLabel("Choose Your Race");
-		 label1.setBounds(475,50, 350,50);
-		 label1.setVisible(true);
-		 label1.setFont(new Font("Comic Sans MS", Font.PLAIN, 35));
-		 window.add(label1);
+		if(player==null) {which= new JLabel("Choose Your Body");}
+		else {which.setText("Choose Your Brain");}
+		 which.setBounds(475,50, 350,50);
+		 which.setVisible(true);
+		 which.setFont(new Font("Comic Sans MS", Font.PLAIN, 35));
+		 window.add(which);
 		 
 		JLabel label2= new JLabel("Race Selected:");
+		//if(player!=null) {label2.setText("Brain Selected: ");}
 		 label2.setBounds(500,100, 350,50);
 		 label2.setVisible(true);
 		 label2.setFont(new Font("Comic Sans MS", Font.PLAIN, 35));
 		 window.add(label2);
 		 
-		 RACE_S= new JLabel("");
+		if(player==null) { RACE_S= new JLabel("");}
 		 RACE_S.setBounds(500,150, 200,50);
 		 RACE_S.setVisible(true);
 		 RACE_S.setFont(new Font("Comic Sans MS", Font.PLAIN, 35));
 		 RACE_S.setHorizontalAlignment(SwingConstants.CENTER);
 		 window.add(RACE_S);
 		
-	
-		Layers.repaint();
+		 JPanel Stats = new JPanel(new GridLayout(0,2));
+		 Stats.setBackground(BRC);
+		 Stats.setBounds(275, 250, 200,200);
+		 window.add(Stats);
+		 window.setComponentZOrder(Stats, 0);
 
+		 Stats.add(new JLabel("Strength:"));		 
+		 JLabel Strength =new JLabel();
+		 Stats.add(Strength);
+		 if(player==null) {Strength.setText("5");}
+		 else {Strength.setText(String.valueOf(player.GetStrength()));}
+		 
+		 Stats.add(new JLabel("Dexterity:"));
+		 JLabel Dex =new JLabel();
+		 Stats.add(Dex);
+		 if(player==null) {Dex.setText("5");}
+		 else {Dex.setText(String.valueOf(player.GetDex()));}
+		 
+		 Stats.add(new JLabel("Willpower:"));
+		 JLabel Will =new JLabel();
+		 Stats.add(Will);
+		 if(player==null) {Will.setText("5");}
+		 else {Will.setText(String.valueOf(player.GetWill()));}
+		 
+		 Stats.add(new JLabel("Intellect:"));
+		 JLabel Int =new JLabel();
+		 Stats.add(Int);
+		 if(player==null) {Int.setText("5");}
+		 else {Int.setText(String.valueOf(player.GetInt()));}
+		 
+		 Stats.add(new JLabel("Constitution:"));
+		 JLabel Con =new JLabel();
+		 Stats.add(Con);
+		 if(player==null) {Con.setText("5");}
+		 else {Con.setText(String.valueOf(player.GetCon()));}
+		 
+		 Stats.add(new JLabel("Charisma:"));
+		 JLabel Charisma =new JLabel();
+		 Stats.add(Charisma);
+		 if(player==null) {Charisma.setText("5");}
+		 else {Charisma.setText(String.valueOf(player.GetChar()));}
+
+		 
+
+		if(player!=null) {
+		RACE_S.setText("");
+		description.setText("");
+		System.out.println("disabling button: " + player.GetBody());
+		switch(player.GetBody()) {
+		case "Elf":
+			Elves.setEnabled(false);
+			break;
+			
+		case "Shialonian":
+			Shialonians.setEnabled(false);
+			break;
+			
+		case "Orcs":
+			Orcs.setEnabled(false);
+			break;
+			
+		case "Dwarf":
+			Dwarves.setEnabled(false);
+			break;
+			
+		case "Human":
+			Humans.setEnabled(false);
+			break;
 		
+		case "Gnome":
+			Gnomes.setEnabled(false);
 		
+		}
+		
+		if(player.GetBrain()!=null) {
+			Elves.setEnabled(false);
+			Shialonians.setEnabled(false);
+			Orcs.setEnabled(false);
+			Dwarves.setEnabled(false);
+			Humans.setEnabled(false);
+			Gnomes.setEnabled(false);
+			
+			description.setText("You selected a " + player.GetBody() +  " body with a  " + player.GetBrain() + " brain. Do you want to Continue with this character?");
+		}
+		
+		}
+		
+		else {player = new Character();}
+		Layers.repaint();
 	}
 	
-	
+	private void Intro() {
+		description.setText("");
+		
+	}
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		String action=arg0.getActionCommand();
@@ -437,10 +550,20 @@ public class Screen extends JFrame implements ActionListener {
 				select.setEnabled(true);
 				//SubRace.setVisible(false);
 				Layers.repaint();
-
-
 				break;
 				
+			case "Select":
+				player.SetRace(RACE_S.getText());
+//				select.setActionCommand("CC_Select2");
+//				which.setText("Select your Brain");
+//				Layers.repaint();
+				CharCreator();
+			break;
+			
+			case "Select2":
+				player.SetBrain(RACE_S.getText());
+				CharCreator();
+			break;
 				
 			default: 
 				if(race.startsWith("SEL")) {
@@ -476,7 +599,7 @@ public class Screen extends JFrame implements ActionListener {
 					description.setText("Shialonians are tiny pinky sized people divided into two sub races that despise one another.These are the Green Shialonians, and the Red Shialonians. Both have white hair, pointed ears, and Fey like eyes that are red or green in hue. Green Shialonians have green skin and red eyes. They hate each other for existing and looking different than one another, and wage war because of that fact. The reason being that in their religion, only one of them is the true creation of Shialon, their god. Each side depicts Shialon with their races color, which equally enrages both sides.They mainly reside in the Blood  Desert, but their burrows can be found anywhere in the wastes.");
 					break;
 					
-				case "Red Shialonian":
+				case "Red Shialonian":			RACE_S.setText("Shialonians ");
 					select.setEnabled(true);
 					description.setVisible(true);
 					description.setText("Shialonians are tiny pinky sized people divided into two sub races that despise one another.These are the Green Shialonians, and the Red Shialonians. Both have white hair, pointed ears, and Fey like eyes that are red or green in hue.  Red Shialonians have red skin and green eyes. They hate each other for existing and looking different than one another, and wage war because of that fact. The reason being that in their religion, only one of them is the true creation of Shialon, their god. Each side depicts Shialon with their races color, which equally enrages both sides.They mainly reside in the Blood  Desert, but their burrows can be found anywhere in the wastes.");
@@ -488,7 +611,7 @@ public class Screen extends JFrame implements ActionListener {
 					description.setText("Orcs are big, green, mostly stupid but with some exceptions. They can stand anywhere from 6'0 to 8'0 and can weigh between 200 to 500 pounds. There are two separate sub-races that  have one thing that sets them both apart. These are the black eyed orcs, and the yellow eyed orcs. The pupils for both sub-races are the same shade of red, but the rest of the eye is either a deep shade of yellow or pitch black. Black eyed orcs are savage wholly evil. Yellow eyed orcs are like the other races in that they actually can choose to be evil or good. Yellow-eyes are typically smarter than their black-eyed counterparts. Typically both species will form biker gangs that roam the wastes.");
 					break;
 					
-				default: 
+					default: 
 					break;
 				}
 				Layers.repaint();
